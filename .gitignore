@@ -1,0 +1,4 @@
+.DS_Store
+.impeccable/hook.cache.json
+.impeccable/config.local.json
+*.log

@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-29T14:38:37.926Z",
+        "reason": "User confirmed: mantenere font, colori e stile Watt About; fondo crema #f8efe0 verificato nel kit 10 fornito come riferimento."
+      }
+    ]
+  }
+}
