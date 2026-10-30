@@ -124,3 +124,5 @@ footer details{max-width:78ch}footer summary{text-align:right}footer details[ope
 @media(max-width:480px){.lab-svg-label{font-size:21px}}
 
 @media(max-width:760px){.picker-field{min-height:46px}.picker-option{min-height:50px}.picker-option-type{max-width:100px}.picker-menu{scroll-padding:5px}}
+
+.picker-field input[readonly]{cursor:pointer;caret-color:transparent;user-select:none;-webkit-user-select:none}

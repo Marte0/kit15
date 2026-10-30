@@ -41,3 +41,5 @@ Le pale della girante sono specchiate orizzontalmente dentro il gruppo rotante, 
 La velocità simbolica della girante usa una curva continua senza soglia di saturazione netta: a parità di portata, ridurre il salto rallenta sempre la rotazione per ogni valore positivo. Il periodo tende gradualmente a un limite minimo, senza appiattire i valori alti dello slider.
 
 Su mobile, la vista Svizzera adatta il viewBox al confine nazionale con un margine minimo per contorno e ombra, così la cartina occupa la larghezza del contenitore. Desktop e focus Ticino mantengono l’inquadratura precedente. La lente conserva le coordinate della scena originale.
+
+Su mobile (fino a 760px) il selettore delle centrali è di sola selezione: campo non modificabile, inputmode none, elenco completo in ordine alfabetico e nessuna tastiera virtuale. Su desktop resta la ricerca per nome. Il passaggio di breakpoint chiude il menu e ripristina la selezione confermata.

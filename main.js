@@ -148,6 +148,14 @@
  const pickerState={open:false,matches:[],active:-1};
  const sortedPlants=[...plants].sort((a,b)=>a.name.localeCompare(b.name,'it'));
  const normalizeName=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('it').trim();
+ function updatePickerMode(){
+  if(pickerState.open)closePicker();
+  pickerInput.readOnly=mobileMap.matches;
+  pickerInput.inputMode=mobileMap.matches?'none':'search';
+  pickerInput.setAttribute('aria-autocomplete',mobileMap.matches?'none':'list');
+  pickerInput.placeholder=mobileMap.matches?'Scegli una centrale…':'Cerca per nome…';
+ }
+
  function syncPicker(p){pickerInput.value=p.name;closePicker(false);}
  function positionPicker(){
   if(!pickerState.open)return;
@@ -157,7 +165,7 @@
   picker.classList.toggle('opens-up',upwards);pickerMenu.style.maxHeight=Math.max(120,Math.min(280,upwards?above:below))+'px';
  }
  function renderPicker(query='',keepSelection=false){
-  const q=normalizeName(query);
+  const q=pickerInput.readOnly?'':normalizeName(query);
   pickerState.matches=sortedPlants.filter(p=>!q||normalizeName(p.name).includes(q));
   if(q)pickerState.matches.sort((a,b)=>Number(normalizeName(b.name).startsWith(q))-Number(normalizeName(a.name).startsWith(q)));
   pickerOptions.replaceChildren();
@@ -195,17 +203,18 @@
   const [x,y]=projection([p.lon,p.lat]);if(state.scope==='ti'&&(x<8||x>782||y<8||y>450))setScope('ch');
   state.types.add(typeOf(p));syncTypeButtons();selectPlant(p.id);$('#picker-status').textContent=`Selezionata ${p.name}`;
  }
- pickerInput.addEventListener('focus',()=>{if(!pickerState.open){openPicker();pickerInput.select();}});
- pickerInput.addEventListener('click',()=>{if(!pickerState.open){openPicker();pickerInput.select();}});
- pickerInput.addEventListener('input',()=>{if(!pickerState.open)openPicker(pickerInput.value);else{renderPicker(pickerInput.value);positionPicker();}});
+ pickerInput.addEventListener('focus',()=>{if(!pickerState.open){openPicker();if(!pickerInput.readOnly)pickerInput.select();}});
+ pickerInput.addEventListener('click',()=>{if(!pickerState.open){openPicker();if(!pickerInput.readOnly)pickerInput.select();}});
+ pickerInput.addEventListener('input',()=>{if(pickerInput.readOnly){pickerInput.value=plants.find(p=>p.id===state.selected).name;return;}if(!pickerState.open)openPicker(pickerInput.value);else{renderPicker(pickerInput.value);positionPicker();}});
  pickerInput.addEventListener('keydown',event=>{
   if(event.key==='ArrowDown'||event.key==='ArrowUp'){
    event.preventDefault();if(!pickerState.open){openPicker();return;}setPickerActive(pickerState.active+(event.key==='ArrowDown'?1:-1));
-  }else if(event.key==='Enter'&&pickerState.open){event.preventDefault();choosePickerPlant(pickerState.active);}
+  }else if(pickerInput.readOnly&&!pickerState.open&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openPicker();}
+  else if(event.key==='Enter'&&pickerState.open){event.preventDefault();choosePickerPlant(pickerState.active);}
   else if(event.key==='Escape'){event.preventDefault();closePicker();}
   else if(event.key==='Tab')closePicker();
  });
- $('#picker-toggle').addEventListener('click',()=>{if(pickerState.open)closePicker();else{openPicker();pickerInput.focus({preventScroll:true});pickerInput.select();}});
+ $('#picker-toggle').addEventListener('click',()=>{if(pickerState.open)closePicker();else{openPicker();pickerInput.focus({preventScroll:true});if(!pickerInput.readOnly)pickerInput.select();}});
  pickerOptions.addEventListener('mousedown',event=>{if(event.target.closest('.picker-option'))event.preventDefault();});
  pickerOptions.addEventListener('click',event=>{const option=event.target.closest('.picker-option');if(!option)return;choosePickerPlant(Number(option.dataset.index));if(event.pointerType==='touch')pickerInput.blur();});
  document.addEventListener('pointerdown',event=>{if(pickerState.open&&!picker.contains(event.target))closePicker();});
@@ -255,6 +264,7 @@
  ['origin','lab'].forEach(v=>$('#tab-'+v).onclick=()=>setView(v));
  $('.main-tabs').setAttribute('role','tablist');
  $$('.main-tabs button').forEach((b,i)=>b.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const next=i===0?'lab':'origin';setView(next);$('#tab-'+next).focus();}});
- mobileMap.addEventListener('change',()=>renderMap());
+ mobileMap.addEventListener('change',()=>{updatePickerMode();renderMap();});
+ updatePickerMode();
  selectPlant(state.selected);renderLab('reset');if(location.hash==='#lab')setView('lab');
 })();

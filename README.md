@@ -12,7 +12,7 @@ Una mappa interattiva permette di esplorare 728 impianti dell’inventario WASTA
 - Filtri per acqua fluente, serbatoio, pompaggio misto e sola ricircolazione.
 - Punti dimensionati secondo la produzione annua attesa.
 - Lente di ingrandimento per individuare le centrali: passaggio del puntatore e clic su desktop; pressione, trascinamento e rilascio su touch.
-- Selettore con ricerca per nome, utilizzabile anche da tastiera.
+- Selettore con ricerca per nome su desktop e lista alfabetica da scorrere su mobile, senza tastiera virtuale. Utilizzabile anche da tastiera fisica.
 - Scheda della centrale con tipologia, produzione annua attesa e salto, con accesso diretto al laboratorio.
 
 Il focus Ticino è un’inquadratura geografica: può includere impianti vicini fuori cantone. Il conteggio riguarda le centrali visibili con i filtri attivi.
