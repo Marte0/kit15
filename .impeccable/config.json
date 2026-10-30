@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-10-29T14:38:37.926Z",
         "reason": "User confirmed: mantenere font, colori e stile Watt About; fondo crema #f8efe0 verificato nel kit 10 fornito come riferimento."
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-30T09:48:01.732Z",
+        "reason": "Agent: detector counts the visually hidden h2 at 15px and compact metric labels at 14px as dominant headings. Visible page title is 24–28px, plant names 32px and laboratory values 38px against body 15px. Compact headings follow the user-requested kit 10 styling."
       }
     ]
   }

@@ -6,8 +6,9 @@
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
  const NS='http://www.w3.org/2000/svg';
  const fmt=n=>new Intl.NumberFormat('it-CH',{maximumFractionDigits:1}).format(n);
- const types={flow:{name:'Acqua fluente',color:'#b9da49',text:'Sfrutta l’acqua che scorre. La produzione dipende dalla portata disponibile nel corso d’acqua.'},storage:{name:'Con serbatoio',color:'#95d9e5',text:'L’acqua viene accumulata e poi fatta scendere verso le turbine. Il bacino permette di scegliere quando produrre.'},pump:{name:'Pompaggio misto',color:'#acb5f8',text:'Può anche riportare acqua verso l’alto consumando elettricità. Il pompaggio conserva energia, con delle perdite.'},loop:{name:'Sola ricircolazione',color:'#ed7770',text:'Sposta acqua tra bacini: consuma energia per pompare e ne restituisce una parte quando turbina. Non crea nuova energia.'}};
+ const types={flow:{name:'Acqua fluente',color:'#b9da49',text:'Sfrutta l’acqua che scorre. La produzione dipende dalla portata disponibile nel corso d’acqua.'},storage:{name:'Con serbatoio',color:'#95d9e5',text:'L’acqua viene accumulata e poi fatta scendere verso le turbine. Il bacino permette di scegliere quando produrre.'},pump:{name:'Pompaggio misto',color:'#acb5f8',text:'Può anche riportare acqua verso l’alto consumando elettricità. Il pompaggio conserva energia, con delle perdite.'},loop:{name:'Sola ricircolazione',color:'#ffd12e',text:'Sposta acqua tra bacini: consuma energia per pompare e ne restituisce una parte quando turbina. Non crea nuova energia.'}};
  const typeOf=p=>p.type==='Laufkraftwerk'?'flow':p.type==='Speicherkraftwerk'?'storage':p.type==='Pumpspeicherkraftwerk'?'pump':'loop';
+ const mobileMap=window.matchMedia('(max-width:760px)');
  const state={view:'origin',scope:'ch',selected:'601300',types:new Set(Object.keys(types))};
  function svg(tag,attrs={},parent){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(parent)parent.append(e);return e;}
  function text(parent,x,y,value,cls='map-label',attrs={}){const e=svg('text',{x,y,class:cls,...attrs},parent);e.textContent=value;return e;}
@@ -19,6 +20,11 @@
   pts=pts.map(project);const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
   const xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
   const scale=Math.min(700/(xmax-xmin),390/(ymax-ymin));
+  // Fit the actual Swiss outline on mobile instead of the padded desktop canvas.
+  const width=(xmax-xmin)*scale,height=(ymax-ymin)*scale,padding=12;
+  $('#map').setAttribute('viewBox',mobileMap.matches&&state.scope==='ch'
+   ? `${395-width/2-padding} ${235-height/2-padding} ${width+padding*2} ${height+padding*2}`
+   : '0 0 790 470');
   projection=ll=>{let p=project(ll);return [395+(p[0]-(xmin+xmax)/2)*scale,235+(p[1]-(ymin+ymax)/2)*scale];};
  }
  function renderMap(){
@@ -32,10 +38,6 @@
   const scale=root.getScreenCTM()?.a||1;shadow.style.transform=`translate(${-3/scale}px,${4/scale}px)`;
   svg('path',{d:path,class:state.scope==='ti'?'country ticino-country':'country','fill-rule':'evenodd'},scene);
   if(state.scope==='ch')cantons.forEach(c=>svg('path',{d:cantonPath(c),class:'canton-border'},scene));
-  else [['TICINO',8.8,46.13],['GRIGIONI',9.18,46.42],['URI',8.58,46.7]].forEach(([name,x,y])=>{const p=projection([x,y]);text(scene,p[0],p[1],name,'map-label',{'text-anchor':'middle'});});
-  if(state.scope==='ch'){
-   [['Lago Lemano',6.5,46.38],['Lago di Costanza',9.3,47.65],['TICINO',8.75,45.86]].forEach(([n,x,y])=>{const p=projection([x,y]);text(scene,p[0],p[1],n,'map-label',{'text-anchor':'middle'});});
-  }
   const shown=plants.filter(p=>{const [x,y]=projection([p.lon,p.lat]);return x>8&&x<782&&y>8&&y<450&&state.types.has(typeOf(p));}).sort((a,b)=>b.energy-a.energy);
   $('#plant-count').textContent=shown.length;mapCandidates=shown.map(p=>({plant:p,point:projection([p.lon,p.lat])}));
   shown.forEach(p=>{
@@ -132,36 +134,83 @@
  window.addEventListener('blur',cancelLens);
  document.addEventListener('keydown',event=>{if(event.key==='Escape')cancelLens();});
  const touchInstructions=matchMedia('(pointer: coarse)');
- function mapInstructions(){ $('#map-help').textContent=touchInstructions.matches?'Tieni il dito sulla mappa e spostalo. Solleva per scegliere.':'Muovi il puntatore per ingrandire. Fai clic per scegliere.'; }
+ function mapInstructions(){ $('#map-help').textContent=touchInstructions.matches?'Tieni premuto, sposta il dito e rilascia per scegliere.':'Sposta il puntatore e fai clic per scegliere.'; }
  mapInstructions();touchInstructions.addEventListener('change',mapInstructions);
  let mapResizeTimer;window.addEventListener('resize',()=>{cancelLens();clearTimeout(mapResizeTimer);mapResizeTimer=setTimeout(()=>{if(state.view==='origin')renderMap();},150);});
- function renderMechanism(p){
-  const t=typeOf(p),root=document.createElementNS(NS,'svg');root.setAttribute('viewBox','0 0 270 100');root.setAttribute('role','img');root.setAttribute('aria-label','Schema: acqua, turbina, elettricità');
-  const defs=svg('defs',{},root),marker=svg('marker',{id:'arrow',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:5,markerHeight:5,orient:'auto-start-reverse'},defs);svg('path',{d:'M0 0 10 5 0 10Z',fill:'#24251f'},marker);
-  svg('path',{d:t==='flow'?'M10 38 H85 V65 H143':'M10 14 V44 H80 V14 M80 44 H100 V65 H143',fill:'none',stroke:'#24251f','stroke-width':2},root);
-  svg('path',{d:t==='flow'?'M10 34 H85 V61 H136':'M12 29 H78 V42 H100 V61 H136',fill:'none',stroke:types[t].color,'stroke-width':7},root);
-  svg('circle',{cx:156,cy:65,r:18,fill:'#f8efe0',stroke:'#24251f','stroke-width':2},root);
-  svg('path',{d:'M156 49 V81 M140 65 H172 M145 54 167 76 M145 76 167 54',stroke:'#24251f','stroke-width':2},root);
-  svg('path',{d:'M178 65 H227',stroke:'#24251f','stroke-width':2,'marker-end':'url(#arrow)'},root);
-  svg('path',{d:'m248 40-14 24h11l-5 22 20-29h-13Z',fill:'#b9da49',stroke:'#24251f','stroke-width':1.5},root);
-  text(root,35,94,t==='flow'?'fiume':'accumulo','map-label',{'text-anchor':'middle'});text(root,157,99,'turbina','map-label',{'text-anchor':'middle'});
-  $('#mechanism').replaceChildren(root);
- }
  function selectPlant(id){
   state.selected=id;const p=plants.find(p=>p.id===id),t=types[typeOf(p)];
   $('#plant-name').textContent=p.name;$('#plant-energy').textContent=fmt(p.energy);$('#plant-head').textContent=fmt(p.head);
-  $('#plant-type').textContent=t.name;$('#plant-id').textContent=`WASTA ${p.id}`;
-  $('#plant-location').textContent=state.scope==='ti'?'Inquadratura sul Ticino e dintorni':'Inventario svizzero WASTA';
-  $('#plant-explainer').textContent=t.text;
-  $('#plant-link').href=`https://map.geo.admin.ch/?lang=it&topic=energie&layers=ch.bfe.statistik-wasserkraftanlagen&ch.bfe.statistik-wasserkraftanlagen=${p.id}`;
-  $('#plant-select').value=id;
-  $$('#plant-picks button').forEach(b=>{b.classList.toggle('active',b.dataset.id===id);b.setAttribute('aria-pressed',String(b.dataset.id===id));});
-  renderMechanism(p);renderMap();updatePlantReference();
+  $('#plant-type').textContent=t.name;
+  syncPicker(p);
+  renderMap();updatePlantReference();
  }
- const picks=[['601300','Biasca'],['602600','Bavona'],['602500','Robiei'],['600100','Lucendro'],['504950','Bieudron'],['109400','Rheinfelden']];
- picks.forEach(([id,name])=>{const b=document.createElement('button');b.textContent=name;b.dataset.id=id;b.type='button';b.onclick=()=>{const p=plants.find(p=>p.id===id);if(state.scope==='ti'&&(p.lon<8.35||p.lon>9.35||p.lat<45.8||p.lat>46.65))setScope('ch');state.types.add(typeOf(p));syncTypeButtons();selectPlant(id);};$('#plant-picks').append(b);});
- [...plants].sort((a,b)=>a.name.localeCompare(b.name,'it')).forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;$('#plant-select').append(o);});
- $('#plant-select').onchange=e=>{setScope('ch');state.types.add(typeOf(plants.find(p=>p.id===e.target.value)));syncTypeButtons();selectPlant(e.target.value);};
+ const picker=$('#plant-picker'),pickerInput=$('#plant-select'),pickerMenu=$('#picker-menu'),pickerOptions=$('#plant-options');
+ const pickerState={open:false,matches:[],active:-1};
+ const sortedPlants=[...plants].sort((a,b)=>a.name.localeCompare(b.name,'it'));
+ const normalizeName=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('it').trim();
+ function syncPicker(p){pickerInput.value=p.name;closePicker(false);}
+ function positionPicker(){
+  if(!pickerState.open)return;
+  const rect=$('.picker-field').getBoundingClientRect(),viewport=window.visualViewport;
+  const top=viewport?.offsetTop||0,bottom=top+(viewport?.height||innerHeight),below=bottom-rect.bottom-12,above=picker.getBoundingClientRect().top-top-12;
+  const upwards=below<180&&above>below;
+  picker.classList.toggle('opens-up',upwards);pickerMenu.style.maxHeight=Math.max(120,Math.min(280,upwards?above:below))+'px';
+ }
+ function renderPicker(query='',keepSelection=false){
+  const q=normalizeName(query);
+  pickerState.matches=sortedPlants.filter(p=>!q||normalizeName(p.name).includes(q));
+  if(q)pickerState.matches.sort((a,b)=>Number(normalizeName(b.name).startsWith(q))-Number(normalizeName(a.name).startsWith(q)));
+  pickerOptions.replaceChildren();
+  const fragment=document.createDocumentFragment();
+  pickerState.matches.forEach((p,i)=>{
+   const option=document.createElement('div');option.id='plant-option-'+p.id;option.className='picker-option';option.setAttribute('role','option');option.dataset.index=i;option.setAttribute('aria-selected',String(p.id===state.selected));
+   const dot=document.createElement('i');dot.className='swatch '+typeOf(p);dot.setAttribute('aria-hidden','true');
+   const name=document.createElement('span');name.className='picker-option-name';name.textContent=p.name;
+   const type=document.createElement('span');type.className='picker-option-type';type.textContent=types[typeOf(p)].name;
+   option.append(dot,name,type);fragment.append(option);
+  });
+  pickerOptions.append(fragment);pickerMenu.scrollTop=0;$('#picker-empty').hidden=pickerState.matches.length!==0;
+  $('#picker-status').textContent=pickerState.matches.length?`${pickerState.matches.length} ${pickerState.matches.length===1?'centrale disponibile':'centrali disponibili'}`:'Nessuna centrale trovata';
+  const current=pickerState.matches.findIndex(p=>p.id===state.selected);
+  setPickerActive(keepSelection&&!q?Math.max(0,current):0,false);
+ }
+ function setPickerActive(index,scroll=true){
+  const previous=pickerOptions.querySelector('.is-active');if(previous)previous.classList.remove('is-active');
+  pickerState.active=pickerState.matches.length?Math.max(0,Math.min(pickerState.matches.length-1,index)):-1;
+  const p=pickerState.matches[pickerState.active],option=p?document.getElementById('plant-option-'+p.id):null;
+  if(option){option.classList.add('is-active');pickerInput.setAttribute('aria-activedescendant',option.id);if(scroll)option.scrollIntoView({block:'nearest'});}
+  else pickerInput.removeAttribute('aria-activedescendant');
+ }
+ function openPicker(query=''){
+  pickerState.open=true;pickerMenu.hidden=false;picker.classList.add('is-open');pickerInput.setAttribute('aria-expanded','true');$('#picker-toggle').setAttribute('aria-expanded','true');$('#picker-toggle').setAttribute('aria-label','Chiudi le centrali');
+  renderPicker(query,true);positionPicker();
+  const current=pickerOptions.querySelector('.is-active');if(current)current.scrollIntoView({block:'nearest'});
+ }
+ function closePicker(restore=true){
+  pickerState.open=false;pickerMenu.hidden=true;picker.classList.remove('is-open');pickerInput.setAttribute('aria-expanded','false');pickerInput.removeAttribute('aria-activedescendant');$('#picker-toggle').setAttribute('aria-expanded','false');$('#picker-toggle').setAttribute('aria-label','Mostra le centrali');
+  if(restore)pickerInput.value=plants.find(p=>p.id===state.selected).name;
+ }
+ function choosePickerPlant(index){
+  const p=pickerState.matches[index];if(!p)return;
+  const [x,y]=projection([p.lon,p.lat]);if(state.scope==='ti'&&(x<8||x>782||y<8||y>450))setScope('ch');
+  state.types.add(typeOf(p));syncTypeButtons();selectPlant(p.id);$('#picker-status').textContent=`Selezionata ${p.name}`;
+ }
+ pickerInput.addEventListener('focus',()=>{if(!pickerState.open){openPicker();pickerInput.select();}});
+ pickerInput.addEventListener('click',()=>{if(!pickerState.open){openPicker();pickerInput.select();}});
+ pickerInput.addEventListener('input',()=>{if(!pickerState.open)openPicker(pickerInput.value);else{renderPicker(pickerInput.value);positionPicker();}});
+ pickerInput.addEventListener('keydown',event=>{
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+   event.preventDefault();if(!pickerState.open){openPicker();return;}setPickerActive(pickerState.active+(event.key==='ArrowDown'?1:-1));
+  }else if(event.key==='Enter'&&pickerState.open){event.preventDefault();choosePickerPlant(pickerState.active);}
+  else if(event.key==='Escape'){event.preventDefault();closePicker();}
+  else if(event.key==='Tab')closePicker();
+ });
+ $('#picker-toggle').addEventListener('click',()=>{if(pickerState.open)closePicker();else{openPicker();pickerInput.focus({preventScroll:true});pickerInput.select();}});
+ pickerOptions.addEventListener('mousedown',event=>{if(event.target.closest('.picker-option'))event.preventDefault();});
+ pickerOptions.addEventListener('click',event=>{const option=event.target.closest('.picker-option');if(!option)return;choosePickerPlant(Number(option.dataset.index));if(event.pointerType==='touch')pickerInput.blur();});
+ document.addEventListener('pointerdown',event=>{if(pickerState.open&&!picker.contains(event.target))closePicker();});
+ picker.addEventListener('focusout',event=>{if(event.relatedTarget&&!picker.contains(event.relatedTarget))closePicker();});
+ window.addEventListener('resize',positionPicker);window.visualViewport?.addEventListener('resize',positionPicker);
  function setScope(scope){state.scope=scope;$$('[data-scope]').forEach(b=>{const a=b.dataset.scope===scope;b.classList.toggle('active',a);b.setAttribute('aria-pressed',String(a));});renderMap();}
  $$('[data-scope]').forEach(b=>b.onclick=()=>{setScope(b.dataset.scope);if(state.scope==='ti')selectPlant('601300');});
  function syncTypeButtons(){$$('[data-type]').forEach(b=>b.setAttribute('aria-pressed',String(state.types.has(b.dataset.type))));}
@@ -176,34 +225,36 @@
  function renderLab(changed){
   const {power,energy,volume}=labValues(),p=scaled(power),e=scaled(energy,true);
   $('#lab-power').textContent=p.value;$('#lab-power-unit').textContent=p.unit;$('#lab-energy').textContent=e.value;$('#lab-energy-unit').textContent=e.unit;
-  $('#lab-energy-caption').textContent=`Quanta ne produci in ${lab.hours} ${lab.hours===1?'ora':'ore'}.`;
+  $('#lab-energy-caption').textContent=`in ${lab.hours} ${lab.hours===1?'ora':'ore'}`;
   $('#head-output').textContent=fmt(lab.head)+' m';$('#flow-output').textContent=fmt(lab.flow)+' m³/s';$('#duration-output').textContent=lab.hours+(lab.hours===1?' ora':' ore');
   $('#head-slider').setAttribute('aria-valuetext',fmt(lab.head)+' metri');$('#flow-slider').setAttribute('aria-valuetext',fmt(lab.flow)+' metri cubi al secondo');$('#duration-slider').setAttribute('aria-valuetext',lab.hours+(lab.hours===1?' ora':' ore'));
-  const y=277-217*Math.pow(Math.min(lab.head/2000,1),.22),pipe=`M270 ${y} H310 V277 H365`;
-  $('#lab-upper-water').setAttribute('d',`M140 ${y-17} H270 V${y+12} H140Z`);
-  $('#lab-intake').setAttribute('d',`M138 ${y-35} V${y+15} H272 V${y-35}`);
+  const y=277-217*Math.pow(Math.min(lab.head/2000,1),.22),bend=Math.min(14,(277-y)/2),pipe=`M270 ${y} H${310-bend} Q310 ${y} 310 ${y+bend} V${277-bend} Q310 277 ${310+bend} 277 H361`;
+  $('#lab-upper-water').setAttribute('d',`M126 ${y-23} H270 V${y+12} Q270 ${y+16} 266 ${y+16} H130 Q126 ${y+16} 126 ${y+12}Z`);
+  $('#lab-intake').setAttribute('d',`M124 ${y-44} V${y+12} Q124 ${y+18} 130 ${y+18} H266 Q272 ${y+18} 272 ${y+12} V${y-44}`);
   ['lab-pipe-outline','lab-pipe-base','lab-flow','lab-flow-marks'].forEach(id=>$('#'+id).setAttribute('d',pipe));
   $('#lab-head-line').setAttribute('y1',y);$('#lab-upper-guide').setAttribute('y1',y);$('#lab-upper-guide').setAttribute('y2',y);
-  $('#lab-head-label').setAttribute('x',53);$('#lab-head-label').setAttribute('y',(277+y)/2);$('#lab-head-label').setAttribute('text-anchor','middle');$('#lab-head-label').setAttribute('transform',`rotate(-90 53 ${(277+y)/2})`);$('#lab-head-label').textContent=fmt(lab.head)+' m';$('#lab-water-label').setAttribute('y',y-48);$('#lab-flow-label').textContent=fmt(lab.flow)+' m³/s';
+  $('#lab-head-label').setAttribute('x',53);$('#lab-head-label').setAttribute('y',(277+y)/2);$('#lab-head-label').setAttribute('text-anchor','middle');$('#lab-head-label').setAttribute('transform',`rotate(-90 53 ${(277+y)/2})`);$('#lab-head-label').textContent=fmt(lab.head)+' m';$('#lab-water-label').setAttribute('y',y-58);$('#lab-flow-label').textContent=fmt(lab.flow)+' m³/s';
   $('#lab-flow').setAttribute('stroke-width',lab.flow?3+12*Math.sqrt(lab.flow/50):0);
   $('#lab-flow-marks').style.opacity=lab.flow>0?1:0;
-  $('#lab-diagram').style.setProperty('--rotor-time',(5/(1+Math.log10(1+power)))+'s');$('#lab-diagram').style.setProperty('--flow-time',(3/(1+Math.sqrt(lab.flow)))+'s');
+  // Symbolic motion: speed follows head, thickness follows flow, rotor follows power.
+  const particleStep=32;
+  $('#lab-flow-marks').setAttribute('stroke-dasharray',`2 ${particleStep-2}`);
+  $('#lab-diagram').style.setProperty('--stream-step',-particleStep+'px');
+  $('#lab-diagram').style.setProperty('--rotor-time',(.65+7.35/(1+Math.sqrt(power/3000)))+'s');
+  $('#lab-diagram').style.setProperty('--flow-time',(particleStep/(8+4*Math.sqrt(lab.head)))+'s');
   $('#lab-diagram').classList.toggle('is-stopped',lab.paused);$('#lab-diagram').classList.toggle('no-power',power===0);$('#lab-diagram').classList.toggle('no-flow',lab.flow===0);$('#lab-diagram').setAttribute('aria-label',`Modello con salto ${fmt(lab.head)} metri, portata ${fmt(lab.flow)} metri cubi al secondo. Potenza ${p.value} ${p.unit}, energia ${e.value} ${e.unit} in ${lab.hours} ore.`);
-  $('#lab-scenario').textContent=lab.reference?`Salto WASTA di ${plants.find(p=>p.id===lab.reference).name}. Portata, tempo e rendimento sono ipotesi.`:'Scenario libero: valori scelti per sperimentare.';
   $('#lab-water-volume').textContent=`In questo scenario attraversano le turbine ${number(volume)} m³ d’acqua. Il flusso è ipotizzato costante per tutto il tempo selezionato.`;
-  $('#double-duration').disabled=lab.hours>12;
-  const messages={head:'Hai cambiato il salto: cambiano sia la potenza sia l’energia prodotta nello stesso tempo.',flow:lab.flow===0?'Senza flusso d’acqua, la potenza e l’energia prodotta sono zero.':'Hai cambiato la portata: più acqua ogni secondo significa più potenza, a parità di salto.',hours:'Hai cambiato il tempo: la potenza resta uguale, l’energia prodotta cambia.',double:'Il doppio del tempo, il doppio dell’energia. La potenza è rimasta identica.',reference:'Hai ripreso un salto reale dalla mappa. Portata e tempo restano quelli del tuo esperimento.',reset:'La potenza dipende da salto e portata. L’energia dipende anche dal tempo.'};
+  const messages={head:'Hai cambiato il salto: cambiano sia la potenza sia l’energia prodotta nello stesso tempo.',flow:lab.flow===0?'Senza flusso d’acqua, la potenza e l’energia prodotta sono zero.':'Hai cambiato la portata: più acqua ogni secondo significa più potenza, a parità di salto.',hours:'Hai cambiato il tempo: la potenza resta uguale, l’energia prodotta cambia.',reference:'Hai ripreso un salto reale dalla mappa. Portata e tempo restano quelli del tuo esperimento.',reset:'La potenza dipende da salto e portata. L’energia dipende anche dal tempo.'};
   if(changed)$('#lab-observation').textContent=lab.head===0?'Senza dislivello, in questo modello non produci energia.':messages[changed];
  }
  [['head-slider','head'],['flow-slider','flow'],['duration-slider','hours']].forEach(([id,key])=>$('#'+id).oninput=e=>{lab[key]=Number(e.target.value);if(key==='head')lab.reference=null;renderLab(key);});
  $('#use-plant-head').onclick=usePlantHead;
  $('#open-lab').onclick=()=>{setView('lab');usePlantHead();$('#tab-lab').focus();};
- $('#double-duration').onclick=()=>{if(lab.hours>12)return;lab.hours*=2;$('#duration-slider').value=lab.hours;renderLab('double');};
- $('#reset-lab').onclick=()=>{lab.head=100;lab.flow=4;lab.hours=2;lab.reference=null;$('#head-slider').value=100;$('#flow-slider').value=4;$('#duration-slider').value=2;renderLab('reset');};
- $('#lab-motion').onclick=()=>{lab.paused=!lab.paused;$('#lab-motion').setAttribute('aria-pressed',String(lab.paused));$('#lab-motion').textContent=lab.paused?'Riprendi animazione':'Ferma animazione';renderLab();};
+ $('#lab-motion').onclick=()=>{lab.paused=!lab.paused;$('#lab-motion').setAttribute('aria-pressed',String(lab.paused));$('#lab-motion').textContent=lab.paused?'Riprendi':'Pausa';$('#lab-motion').setAttribute('aria-label',lab.paused?'Riprendi l’animazione':'Metti in pausa l’animazione');renderLab();};
  function setView(view){state.view=view;if(location.hash!=='#'+view)history.replaceState(null,'','#'+view);['origin','lab'].forEach(v=>{$('#'+v).hidden=v!==view;$('#tab-'+v).classList.toggle('active',v===view);$('#tab-'+v).setAttribute('aria-selected',String(v===view));});}
  ['origin','lab'].forEach(v=>$('#tab-'+v).onclick=()=>setView(v));
  $('.main-tabs').setAttribute('role','tablist');
  $$('.main-tabs button').forEach((b,i)=>b.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const next=i===0?'lab':'origin';setView(next);$('#tab-'+next).focus();}});
+ mobileMap.addEventListener('change',()=>renderMap());
  selectPlant(state.selected);renderLab('reset');if(location.hash==='#lab')setView('lab');
 })();

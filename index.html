@@ -4,24 +4,33 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f8efe0">
 <title>Acqua in movimento · Watt About</title>
+<link rel="icon" type="image/png" sizes="300x300" href="assets/favicon.png">
 <link rel="stylesheet" href="style.css"><script defer src="data.js"></script><script defer src="cantons.js"></script><script defer src="main.js"></script>
 </head>
 <body>
 <div class="shell">
-<header class="masthead"><a href="https://wattabout.ch" target="_blank" rel="noopener" class="brand">WATT<span>ABOUT</span><i aria-hidden="true">?</i></a><span class="kit-label">ENERGIA DALL’ACQUA <b>KIT 15</b></span><span class="draft">PRIMA BOZZA</span></header>
-<div class="intro"><h1>Acqua in <br><span>movimento.</span></h1><div class="intro-copy"><p>Scende dalle montagne.<br>Muove le turbine. Conserva energia.</p><p class="small">Esplora l’idroelettrico in Svizzera e in Ticino.</p></div></div>
+<header class="page-header"><h1>L’energia dell’acqua</h1><a class="source-link" href="https://www.bfe.admin.ch/en/hydropower-statistics" target="_blank" rel="noopener" aria-label="Fonte: Ufficio federale dell’energia UFE">Fonte: UFE <span aria-hidden="true">↗</span></a></header>
 <nav class="main-tabs" aria-label="Esplora l’idroelettrico"><button id="tab-origin" class="active" role="tab" aria-selected="true" aria-controls="origin">Dove nasce l’energia?</button><button id="tab-lab" role="tab" aria-selected="false" aria-controls="lab">Quanta energia può fare?</button></nav>
 <main>
 <section id="origin" role="tabpanel" aria-labelledby="tab-origin">
-<div class="view-heading"><div><h2>Un territorio, tante centrali.</h2><p>Esplora con la lente e scegli la centrale da conoscere.</p></div><div class="scope" aria-label="Territorio della mappa"><button data-scope="ch" class="active" aria-pressed="true">Svizzera</button><button data-scope="ti" aria-pressed="false">Focus Ticino</button></div></div>
-<div class="atlas-layout"><div class="atlas"><div class="map-note"><span id="plant-count">728</span> centrali WASTA <span class="year-stamp">DATI 2025</span></div><div class="map-stage"><svg id="map" viewBox="0 0 790 470" role="img" aria-label="Mappa degli impianti idroelettrici svizzeri. Le centrali sono selezionabili anche dall’elenco sottostante."></svg><div id="map-hover-name" class="map-hover-name" hidden></div></div><p id="map-help" class="map-help">Muovi il puntatore per ingrandire. Fai clic per scegliere.</p><div class="map-legend" aria-label="Tipologie di centrale"><button data-type="flow" aria-pressed="true"><i class="swatch flow"></i>Acqua fluente</button><button data-type="storage" aria-pressed="true"><i class="swatch storage"></i>Con serbatoio</button><button data-type="pump" aria-pressed="true"><i class="swatch pump"></i>Pompaggio misto</button><button data-type="loop" aria-pressed="true"><i class="swatch loop"></i>Sola ricircolazione</button></div><p class="map-caption">Area dei punti proporzionale alla produzione annua attesa; dimensione minima per i piccoli impianti.</p></div>
-<aside class="plant-detail" aria-live="polite"><div class="plant-top"><span id="plant-type" class="type-label"></span><span id="plant-id" class="small"></span></div><h3 id="plant-name"></h3><div class="plant-location" id="plant-location"></div><div class="plant-metrics"><div><strong id="plant-energy"></strong><span>GWh / anno attesi</span></div><div><strong id="plant-head"></strong><span>metri di salto</span></div></div><div id="mechanism" class="mechanism"></div><p id="plant-explainer"></p><p class="method-note">Produzione attesa da apporti naturali: non è una misura in tempo reale.</p><button id="open-lab" class="open-lab" type="button">Prova questo salto nel laboratorio <span aria-hidden="true">↗</span></button><a id="plant-link" target="_blank" rel="noopener">Apri nella mappa UFE <span aria-hidden="true">↗</span></a></aside></div>
-<div class="discovery"><span>Da dove cominciamo?</span><div id="plant-picks"></div></div>
-<details class="more-plants"><summary>Esplora tutte le centrali per nome</summary><label for="plant-select">Scegli una centrale</label><select id="plant-select"></select></details>
-<div class="learning-note"><b>Il salto conta.</b><p>È il dislivello sfruttato dall’acqua. La produzione dipende anche da quanta acqua attraversa le turbine e per quanto tempo.</p></div>
+<h2 class="sr-only">Centrali idroelettriche</h2>
+<div class="view-heading"><div class="scope" aria-label="Territorio della mappa"><button data-scope="ch" class="active" aria-pressed="true">Svizzera</button><button data-scope="ti" aria-pressed="false">Focus Ticino</button></div></div>
+<div class="atlas-layout"><div class="atlas"><div class="map-note"><span id="plant-count">728</span> centrali WASTA <span class="year-stamp">DATI 2025</span></div><div class="map-stage"><svg id="map" viewBox="0 0 790 470" role="img" aria-label="Mappa degli impianti idroelettrici svizzeri. Le centrali sono selezionabili anche dall’elenco sottostante."></svg><div id="map-hover-name" class="map-hover-name" hidden></div></div><p id="map-help" class="map-help">Sposta il puntatore e fai clic per scegliere.</p><div class="map-legend" aria-label="Tipologie di centrale"><button data-type="flow" aria-pressed="true"><i class="swatch flow"></i>Acqua fluente</button><button data-type="storage" aria-pressed="true"><i class="swatch storage"></i>Con serbatoio</button><button data-type="pump" aria-pressed="true"><i class="swatch pump"></i>Pompaggio misto</button><button data-type="loop" aria-pressed="true"><i class="swatch loop"></i>Sola ricircolazione</button></div></div>
+<aside class="plant-detail" aria-live="polite"><div class="plant-top"><span id="plant-type" class="type-label"></span></div><h3 id="plant-name"></h3><div class="plant-metrics"><div><strong id="plant-energy"></strong><span>GWh / anno attesi</span></div><div><strong id="plant-head"></strong><span>metri di salto</span></div></div><button id="open-lab" class="open-lab" type="button">Prova nel laboratorio <span aria-hidden="true">↗</span></button></aside></div>
+<div class="plant-picker" id="plant-picker">
+ <label for="plant-select">Scegli una centrale</label>
+ <div class="picker-field">
+  <input id="plant-select" type="text" inputmode="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="plant-options" autocomplete="off" spellcheck="false" placeholder="Cerca per nome…">
+  <button id="picker-toggle" type="button" aria-label="Mostra le centrali" aria-controls="plant-options" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+ </div>
+ <div class="picker-menu" id="picker-menu" hidden><div id="plant-options" role="listbox" aria-label="Centrali idroelettriche"></div><p id="picker-empty" hidden>Nessuna centrale trovata.</p></div>
+ <span id="picker-status" class="sr-only" role="status"></span>
+</div>
+
 </section>
 <section id="lab" role="tabpanel" aria-labelledby="tab-lab" hidden>
-<div class="view-heading"><div><h2>Fai lavorare l’acqua.</h2><p>Cambia il salto, la portata e il tempo. Scopri cosa succede.</p></div><span class="model-tag">MODELLO DIDATTICO · RENDIMENTO IPOTIZZATO 85%</span></div>
+<h2 class="sr-only">Laboratorio dell’acqua</h2>
+
 <div class="lab-layout">
  <div class="lab-experiment">
   <div class="lab-diagram-wrap"><svg id="lab-diagram" viewBox="0 0 700 350" role="img" aria-label="Schema dell’acqua che scende, attraversa una turbina e produce elettricità">
@@ -36,29 +45,37 @@
    <line id="lab-upper-guide" x1="88" x2="130" y1="80" y2="80" stroke="#8d877b" stroke-dasharray="3 5"/>
    <line x1="88" x2="340" y1="277" y2="277" stroke="#8d877b" stroke-dasharray="3 5"/>
    <text id="lab-head-label" class="lab-svg-value" x="65" y="175" text-anchor="end">100 m</text>
-   <text id="lab-water-label" class="lab-svg-label" x="156" y="55">ACQUA IN INGRESSO</text>
-   <text id="lab-flow-label" class="lab-svg-value" x="400" y="225" text-anchor="middle">4 m³/s</text>
-   <circle cx="400" cy="277" r="35" fill="#b9da49" stroke="#24251f" stroke-width="2.5"/>
-   <g id="lab-rotor" class="lab-rotor"><path d="M400 250 V304 M373 277 H427 M381 258 419 296 M381 296 419 258" fill="none" stroke="#24251f" stroke-width="3"/><circle cx="400" cy="277" r="6" fill="#24251f"/></g>
-   <path d="M437 277 H512" stroke="#24251f" stroke-width="2" marker-end="url(#lab-arrow)"/>
-   <path d="m572 227-32 51h24l-13 46 45-63h-27Z" fill="#ffd12e" stroke="#24251f" stroke-width="2.5" stroke-linejoin="round"/>
-   <text x="400" y="323" text-anchor="middle" class="lab-svg-label">TURBINA<tspan x="400" dy="20">+ GENERATORE</tspan></text><text x="570" y="337" text-anchor="middle" class="lab-svg-label">ELETTRICITÀ</text>
-  </svg><div class="diagram-caption"><span>Schema semplificato, non in scala.</span><button id="lab-motion" type="button" aria-pressed="false">Ferma animazione</button></div></div>
-  <div class="lab-results" aria-live="polite" aria-atomic="true"><div class="lab-result power-result"><h3>La potenza</h3><p><strong id="lab-power">—</strong> <span id="lab-power-unit">kW</span></p><span>Quanto velocemente produci energia.</span></div><div class="lab-result energy-result"><h3>L’energia</h3><p><strong id="lab-energy">—</strong> <span id="lab-energy-unit">kWh</span></p><span id="lab-energy-caption">Quanta ne produci in 2 ore.</span></div></div>
+   <text id="lab-water-label" class="lab-svg-label" x="156" y="55">Acqua in ingresso</text>
+   <text id="lab-flow-label" class="lab-svg-value" x="303" y="315" text-anchor="end">4 m³/s</text>
+   <path d="M400 314 V326 Q400 339 386 339 H338" fill="none" stroke="#24251f" stroke-width="20" stroke-linecap="round"/>
+   <path d="M400 314 V326 Q400 339 386 339 H338" fill="none" stroke="#95d9e5" stroke-width="15" stroke-linecap="round"/>
+   <circle cx="400" cy="277" r="39" fill="#f8efe0" stroke="#24251f" stroke-width="2.5"/>
+   <circle cx="400" cy="277" r="31" fill="#b9da49"/>
+   <g id="lab-rotor" class="lab-rotor"><g transform="translate(800 0) scale(-1 1)" fill="none" stroke="#24251f" stroke-width="2.5" stroke-linecap="round"><path d="M400 277 Q380 270 389 250"/><path d="M400 277 Q407 257 427 266"/><path d="M400 277 Q420 284 411 304"/><path d="M400 277 Q393 297 373 288"/></g><circle cx="400" cy="277" r="6" fill="#24251f"/></g>
+   <path d="M439 277 H491" fill="none" stroke="#24251f" stroke-width="7"/>
+   <rect x="491" y="247" width="80" height="60" rx="12" fill="#acb5f8" stroke="#24251f" stroke-width="2.5"/>
+   <path d="M506 277 Q512 254 521 277 T536 277 T551 277" fill="none" stroke="#24251f" stroke-width="2.5" stroke-linecap="round"/>
+   <path d="M571 277 H607" fill="none" stroke="#24251f" stroke-width="2" marker-end="url(#lab-arrow)"/>
+   <svg x="614" y="246" width="48" height="62" viewBox="0 0 32 41" overflow="visible" aria-hidden="true"><path d="M1.14952 22.5561L11.6358 26.4884C12.0948 26.6606 12.3614 27.1401 12.2653 27.6209L9.95169 39.1887C9.75413 40.1765 10.976 40.8035 11.6633 40.0671L30.436 19.9536C30.9221 19.4327 30.7231 18.5851 30.056 18.3349L19.5698 14.4026C19.1107 14.2304 18.8441 13.7509 18.9403 13.2701L21.2539 1.7023C21.4514 0.714523 20.2296 0.0874444 19.5422 0.823865L0.769587 20.9374C0.28347 21.4582 0.482433 22.3059 1.14952 22.5561Z" fill="#ffd12e" stroke="#24251f" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <text x="400" y="224" text-anchor="middle" class="lab-svg-label">Turbina</text>
+   <text x="531" y="333" text-anchor="middle" class="lab-svg-label">Generatore</text>
+   <text x="638" y="224" text-anchor="middle" class="lab-svg-label">Elettricità</text>
+  </svg></div>
+  <div class="lab-results" aria-live="polite" aria-atomic="true"><div class="lab-result power-result"><h3>Potenza</h3><p><strong id="lab-power">—</strong> <span id="lab-power-unit">kW</span></p></div><div class="lab-result energy-result"><h3>Energia</h3><p><strong id="lab-energy">—</strong> <span id="lab-energy-unit">kWh</span></p><span id="lab-energy-caption">in 2 ore</span></div></div>
  </div>
  <div class="lab-controls">
-  <div class="lab-control"><div class="control-heading"><label for="head-slider">Il salto</label><output id="head-output" for="head-slider">100 m</output></div><input id="head-slider" type="range" min="0" max="2000" step="0.1" value="100"><p>Il dislivello sfruttato dall’acqua.</p></div>
-  <div class="lab-control"><div class="control-heading"><label for="flow-slider">La portata</label><output id="flow-output" for="flow-slider">4 m³/s</output></div><input id="flow-slider" type="range" min="0" max="50" step="0.1" value="4"><p>Quanti metri cubi d’acqua passano ogni secondo.</p></div>
-  <div class="lab-control"><div class="control-heading"><label for="duration-slider">Il tempo</label><output id="duration-output" for="duration-slider">2 ore</output></div><input id="duration-slider" type="range" min="1" max="24" step="1" value="2"><p>Per quanto tempo il flusso resta costante.</p></div>
-  <div class="lab-reference"><span>Parti da una centrale della mappa</span><button id="use-plant-head" type="button">Usa il salto di Biasca <b>684 m</b></button><p id="lab-scenario">Scenario libero: valori scelti per sperimentare.</p></div>
+  <div class="lab-control"><div class="control-heading"><label for="head-slider">Salto</label><output id="head-output" for="head-slider">100 m</output></div><input id="head-slider" aria-describedby="head-help" type="range" min="0" max="2000" step="0.1" value="100"><p id="head-help" class="sr-only">Il dislivello sfruttato dall’acqua.</p></div>
+  <div class="lab-control"><div class="control-heading"><label for="flow-slider">Portata</label><output id="flow-output" for="flow-slider">4 m³/s</output></div><input id="flow-slider" aria-describedby="flow-help" type="range" min="0" max="50" step="0.1" value="4"><p id="flow-help" class="sr-only">Quanti metri cubi d’acqua passano ogni secondo.</p></div>
+  <div class="lab-control"><div class="control-heading"><label for="duration-slider">Tempo</label><output id="duration-output" for="duration-slider">2 ore</output></div><input id="duration-slider" aria-describedby="duration-help" type="range" min="1" max="24" step="1" value="2"><p id="duration-help" class="sr-only">Per quanto tempo il flusso resta costante.</p></div>
+  <div class="lab-reference"><button id="use-plant-head" type="button">Usa il salto di Biasca <b>684 m</b></button></div>
  </div>
 </div>
-<div class="lab-discovery"><div><h3>Più tempo, più potenza?</h3><p>Prova a raddoppiare il tempo e osserva i due risultati.</p></div><button id="double-duration" type="button">Raddoppia il tempo <span aria-hidden="true">×2</span></button><button id="reset-lab" type="button">Ricomincia</button></div>
-<div id="lab-observation" class="lab-observation" role="status">La potenza dipende da salto e portata. L’energia dipende anche dal tempo.</div>
-<details class="lab-method"><summary>Come funziona il modello?</summary><div><p>Supponiamo che salto e portata restino costanti. Usiamo un rendimento complessivo fisso dell’85%: è un’ipotesi didattica, non il rendimento misurato delle centrali.</p><p><b>Potenza (kW) = 9,81 × portata (m³/s) × salto (m) × 0,85</b><br><b>Energia (kWh) = potenza (kW) × tempo (ore)</b></p><p id="lab-water-volume"></p><p>Il salto di una centrale può essere ripreso da WASTA. Portata, durata e rendimento restano ipotesi. Il modello non ricostruisce la produzione effettiva e non include i limiti delle turbine o la disponibilità d’acqua.</p><p>1 MW = 1’000 kW · 1 MWh = 1’000 kWh · 1 GWh = 1’000’000 kWh.</p></div></details>
-<div class="learning-note"><b>La differenza è il tempo.</b><p>La potenza dice quanto velocemente produci energia. Se lavori il doppio del tempo alla stessa potenza, produci il doppio dell’energia.</p></div>
+
+<div id="lab-observation" class="sr-only" role="status">La potenza dipende da salto e portata. L’energia dipende anche dal tempo.</div>
+
+
 </section>
 </main>
-<footer><span>Watt About · L’energia, da esplorare.</span><details><summary>Fonti e lettura dei dati</summary><p>Centrali: <a href="https://www.bfe.admin.ch/en/hydropower-statistics" target="_blank" rel="noopener">UFE, WASTA</a>, fotografia al 31.12.2025. Comprende impianti da almeno 300 kW; la produzione attesa non è la produzione effettiva di un anno. Per impianti di confine è considerata la quota svizzera. I valori nulli di apporto naturale degli impianti di ricircolazione non significano che non turbinino acqua.</p><p>Laboratorio: modello semplificato con acqua di densità 1’000 kg/m³, gravità 9,81 m/s² e rendimento complessivo ipotizzato dell’85%. Potenza = ρ × g × Q × H × η; energia = potenza × tempo. Il salto può essere ripreso da WASTA; gli altri parametri non sono misure dell’impianto. <a href="https://ppp.worldbank.org/sites/default/files/2021-10/Hydroelectric%20Power%20-%20A%20Guide%20for%20Developers%20and%20Investors.pdf" target="_blank" rel="noopener">Riferimento: guida tecnica idroelettrica, Banca Mondiale / IFC</a>.</p><p>Confine nazionale: Natural Earth, public domain. Confini cantonali: BFS 2025, via Swiss Geography Look Ups. Coordinate WASTA convertite da LV95 con formule approssimate. La vista “Focus Ticino” usa un’inquadratura geografica e non un filtro amministrativo cantonale.</p></details></footer>
+<footer><details class="technical-notes"><summary>Fonti, modello e ipotesi</summary><h3>Il modello del laboratorio</h3><p>Supponiamo che salto e portata restino costanti. Usiamo un rendimento complessivo fisso dell’85%: è un’ipotesi didattica, non il rendimento misurato delle centrali.</p><p><b>Potenza (kW) = 9,81 × portata (m³/s) × salto (m) × 0,85</b><br><b>Energia (kWh) = potenza (kW) × tempo (ore)</b></p><p id="lab-water-volume"></p><p>Il salto di una centrale può essere ripreso da WASTA. Portata, durata e rendimento restano ipotesi. Il modello non ricostruisce la produzione effettiva e non include i limiti delle turbine o la disponibilità d’acqua.</p><p>L’animazione è simbolica: la velocità dell’acqua rappresenta l’effetto del salto, lo spessore del flusso indica la portata e la velocità della girante rappresenta la potenza, non i giri reali di una turbina. Non è una simulazione della velocità in una condotta a diametro fisso. Il tempo modifica l’energia prodotta, senza accelerare l’animazione.</p><p>1 MW = 1’000 kW · 1 MWh = 1’000 kWh · 1 GWh = 1’000’000 kWh.</p><p class="motion-setting">Animazione <button id="lab-motion" type="button" aria-pressed="false" aria-label="Metti in pausa l’animazione">Pausa</button></p><h3>Fonti dei dati</h3><p>Centrali: <a href="https://www.bfe.admin.ch/en/hydropower-statistics" target="_blank" rel="noopener">UFE, WASTA</a>, fotografia al 31.12.2025. L’area dei punti rappresenta la produzione attesa, con una dimensione minima per i piccoli impianti. Comprende impianti da almeno 300 kW; la produzione attesa non è la produzione effettiva di un anno. Per impianti di confine è considerata la quota svizzera. I valori nulli di apporto naturale degli impianti di ricircolazione non significano che non turbinino acqua.</p><p>Riferimento del modello: <a href="https://ppp.worldbank.org/sites/default/files/2021-10/Hydroelectric%20Power%20-%20A%20Guide%20for%20Developers%20and%20Investors.pdf" target="_blank" rel="noopener">guida tecnica idroelettrica, Banca Mondiale / IFC</a>.</p><p>Confine nazionale: Natural Earth, public domain. Confini cantonali: BFS 2025, via Swiss Geography Look Ups. Coordinate WASTA convertite da LV95 con formule approssimate. La vista “Focus Ticino” usa un’inquadratura geografica e non un filtro amministrativo cantonale.</p></details></footer>
 </div>
 </body></html>

@@ -2,12 +2,15 @@
 
 Prima bozza navigabile per Watt About, ragazzi di 12–18 anni.
 
+Il 30 ottobre 2026 è stato creato il commit di salvataggio `291dbe7` prima della pulizia editoriale richiesta dall’utente. La versione successiva riduce i testi visibili e segue titolo, pesi e spaziature del kit 10; spiegazioni e metodi restano consultabili nei dettagli apribili. Favicon importata dallo stesso progetto.
+
 Aprire `index.html` direttamente nel browser. Font, dati e geometrie sono locali: l’esperienza funziona anche offline. Le fonti esterne e la mappa UFE richiedono una connessione. Per l’anteprima locale: `python3 -m http.server 8015 --bind 127.0.0.1`.
 
 ## Interazioni
 
-- **Dove nasce l’energia?** Mappa con 728 righe WASTA, selezione degli impianti, filtro per tipo, inquadratura sul Ticino, sei casi suggeriti e selettore completo per nome. Dettaglio con produzione annua attesa, salto e schema del meccanismo.
+- **Dove nasce l’energia?** Mappa con 728 righe WASTA, selezione degli impianti, filtro per tipo, inquadratura sul Ticino, selettore completo per nome sempre visibile (“Scegli una centrale”). Dettaglio con produzione annua attesa, salto e schema del meccanismo.
 - **Lente sulla mappa:** ingrandimento 3×, anteprima della centrale più vicina e nome esterno alla lente. Mouse: hover e clic. Touch/penna: pressione, trascinamento e rilascio per confermare. La scheda resta invariata durante l’anteprima. Se nessun punto è abbastanza vicino non si seleziona nulla. Pointer cancel, perdita del gesto ed Escape annullano. Il trascinamento sulla mappa è riservato alla lente; lo scorrimento della pagina resta disponibile fuori dalla mappa. Il selettore per nome rimane l’alternativa da tastiera e per punti coincidenti.
+- **Scegli una centrale:** campo combinato con ricerca per nome, elenco di risultati e tipologia. Frecce + Invio selezionano; Escape annulla e ripristina il nome corrente. Gestiti risultati vuoti e chiusura al clic esterno o con Tab. La selezione è sincronizzata con la mappa; l’elenco si posiziona in base allo spazio disponibile. Ricerca completamente locale, senza librerie o servizi esterni.
 - **Quanta energia può fare?** Laboratorio con cursori per salto, portata e durata; potenza ed energia calcolate separatamente. Lo schema risponde al salto e alla portata. Il tempo modifica solo l’energia. Pulsanti per raddoppiare la durata, ricominciare, fermare il movimento e usare il salto reale della centrale selezionata. Dalla scheda nella mappa si può aprire direttamente il laboratorio con quel salto.
 - Controlli utilizzabili da tastiera, alternativa testuale alla selezione dei punti, layout mobile verificato a 390px. Le animazioni rispettano la preferenza di movimento ridotto e si possono fermare con un pulsante.
 
