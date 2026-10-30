@@ -1,80 +1,112 @@
-# Acqua in movimento — Kit 15
+# L’energia dell’acqua — Watt About · Kit 15
 
-Prima bozza navigabile per Watt About, ragazzi di 12–18 anni.
+Esperienza interattiva educativa sull’idroelettrico in Svizzera e in Ticino, destinata a ragazzi dai 12 ai 18 anni. Progettata per l’esplorazione individuale, l’uso in classe e la consultazione da computer, tablet e smartphone.
 
-Il 30 ottobre 2026 è stato creato il commit di salvataggio `291dbe7` prima della pulizia editoriale richiesta dall’utente. La versione successiva riduce i testi visibili e segue titolo, pesi e spaziature del kit 10; spiegazioni e metodi restano consultabili nei dettagli apribili. Favicon importata dallo stesso progetto.
+## L’esperienza
 
-Aprire `index.html` direttamente nel browser. Font, dati e geometrie sono locali: l’esperienza funziona anche offline. Le fonti esterne e la mappa UFE richiedono una connessione. Per l’anteprima locale: `python3 -m http.server 8015 --bind 127.0.0.1`.
+### Dove nasce l’energia?
 
-## Interazioni
+Una mappa interattiva permette di esplorare 728 impianti dell’inventario WASTA dell’Ufficio federale dell’energia (UFE).
 
-- **Dove nasce l’energia?** Mappa con 728 righe WASTA, selezione degli impianti, filtro per tipo, inquadratura sul Ticino, selettore completo per nome sempre visibile (“Scegli una centrale”). Dettaglio con produzione annua attesa, salto e schema del meccanismo.
-- **Lente sulla mappa:** ingrandimento 3×, anteprima della centrale più vicina e nome esterno alla lente. Mouse: hover e clic. Touch/penna: pressione, trascinamento e rilascio per confermare. La scheda resta invariata durante l’anteprima. Se nessun punto è abbastanza vicino non si seleziona nulla. Pointer cancel, perdita del gesto ed Escape annullano. Il trascinamento sulla mappa è riservato alla lente; lo scorrimento della pagina resta disponibile fuori dalla mappa. Il selettore per nome rimane l’alternativa da tastiera e per punti coincidenti.
-- **Scegli una centrale:** campo combinato con ricerca per nome, elenco di risultati e tipologia. Frecce + Invio selezionano; Escape annulla e ripristina il nome corrente. Gestiti risultati vuoti e chiusura al clic esterno o con Tab. La selezione è sincronizzata con la mappa; l’elenco si posiziona in base allo spazio disponibile. Ricerca completamente locale, senza librerie o servizi esterni.
-- **Quanta energia può fare?** Laboratorio con cursori per salto, portata e durata; potenza ed energia calcolate separatamente. Lo schema risponde al salto e alla portata. Il tempo modifica solo l’energia. Pulsanti per raddoppiare la durata, ricominciare, fermare il movimento e usare il salto reale della centrale selezionata. Dalla scheda nella mappa si può aprire direttamente il laboratorio con quel salto.
-- Controlli utilizzabili da tastiera, alternativa testuale alla selezione dei punti, layout mobile verificato a 390px. Le animazioni rispettano la preferenza di movimento ridotto e si possono fermare con un pulsante.
+- Vista della Svizzera e inquadratura sul Ticino, con confini cantonali.
+- Filtri per acqua fluente, serbatoio, pompaggio misto e sola ricircolazione.
+- Punti dimensionati secondo la produzione annua attesa.
+- Lente di ingrandimento per individuare le centrali: passaggio del puntatore e clic su desktop; pressione, trascinamento e rilascio su touch.
+- Selettore con ricerca per nome, utilizzabile anche da tastiera.
+- Scheda della centrale con tipologia, produzione annua attesa e salto, con accesso diretto al laboratorio.
 
-## Fonti e trasformazioni
+Il focus Ticino è un’inquadratura geografica: può includere impianti vicini fuori cantone. Il conteggio riguarda le centrali visibili con i filtri attivi.
 
-Fotografia scaricata il 29 ottobre 2026. Nessun aggiornamento automatico attivo.
+### Quanta energia può fare?
 
-### Impianti
+Un laboratorio consente di modificare **salto**, **portata** e **tempo**, osservando separatamente potenza ed energia prodotta.
 
-CSV pubblico caricato dalla storymap UFE:
-https://www.uvek-gis.admin.ch/BFE/storymaps/WK_WASTA/WASTA20251231.csv
+Lo schema animato rende visibili gli effetti dei parametri:
 
-Copia originale: `data/wasta-source.csv`. Data nominale: 31 dicembre 2025. Campi usati: nome, identificativo WASTA, produzione attesa in GWh, salto in metri, tipologia, coordinate LV95. Le coordinate sono convertite con le formule approssimate LV95 → WGS84; proiezione locale equirettangolare con correzione a latitudine 46,8° per la visualizzazione.
+- Il salto modifica il dislivello e la velocità rappresentata dell’acqua.
+- La portata modifica lo spessore del flusso.
+- Salto e portata determinano la potenza e la velocità simbolica della turbina.
+- Il tempo modifica l’energia prodotta, senza cambiare la velocità dell’animazione.
+- A salto o portata zero, il movimento si ferma.
 
-Classi presenti nel file: 605 acqua fluente, 99 serbatoio, 21 pompaggio misto, 3 sola ricircolazione. Sono preservate tutte le righe. L’area dei punti segue la produzione attesa con raggio minimo di 2,3 unità SVG per leggibilità; il conteggio visualizzato è quello dei punti nell’inquadratura e nei filtri attivi. Il focus Ticino è un’inquadratura, non un filtro basato sui confini cantonali.
+È possibile usare il salto della centrale selezionata sulla mappa. Portata, durata e rendimento rimangono ipotesi del modello.
 
-La produzione attesa non è una produzione misurata nel 2025. Le grandezze riguardano gli apporti naturali e la quota svizzera degli impianti di confine; zero per gli apporti naturali non significa assenza di produzione da pompaggio. Schema del meccanismo generico per tipologia, non ricostruzione tecnica del singolo impianto.
+Le spiegazioni, le formule e il controllo per mettere in pausa l’animazione sono raccolti sotto **“Fonti, modello e ipotesi”**. Le animazioni rispettano la preferenza di sistema per il movimento ridotto.
 
-### Laboratorio: modello fisico
+## Avvio locale
 
-`P (kW) = ρ × g × Q × H × η / 1000`; `E (kWh) = P × t`. Densità 1’000 kg/m³, gravità 9,81 m/s² e rendimento complessivo ipotizzato 0,85. Il volume transitato è `Q × t × 3600` m³.
+Il progetto usa HTML, CSS e JavaScript nativi, senza dipendenze esterne, installazione di pacchetti o compilazione.
 
-Valori iniziali: H = 100 m, Q = 4 m³/s, t = 2 h. Risultati prima dell’arrotondamento: 3335,4 kW e 6670,8 kWh. Potenza ed energia si mostrano con prefissi k/M/G, al massimo due decimali.
+Dalla cartella del progetto:
 
-Solo il salto può essere importato da WASTA; portata, durata e rendimento sono ipotesi, anche quando si usa una centrale reale. Il modello a parametri costanti non simula disponibilità d’acqua, limiti di potenza, regolazione, pompaggio o il rendimento effettivo dell’impianto. Il rendimento complessivo riassume le perdite senza ricostruirle per componente.
+```bash
+python3 -m http.server 8015 --bind 127.0.0.1
+```
 
-Riferimento della formula: [guida tecnica idroelettrica IFC/Banca Mondiale](https://ppp.worldbank.org/sites/default/files/2021-10/Hydroelectric%20Power%20-%20A%20Guide%20for%20Developers%20and%20Investors.pdf). L’85% è una scelta didattica di questa bozza.
+Aprire [http://127.0.0.1:8015/](http://127.0.0.1:8015/).
 
-Otto verifiche sulla funzione effettiva dei calcoli: valore di riferimento, potenza invariata al raddoppio della durata, energia doppia, linearità rispetto a portata e salto, casi a salto/portata zero e volume transitato.
+È possibile anche aprire `index.html` direttamente nel browser. Font, dati e geometrie sono inclusi nel progetto: l’esperienza funziona offline. I collegamenti alle fonti esterne richiedono una connessione.
 
-### Bacini — archivio della prima bozza
+## Dati e modello
 
-La vista dei bacini è stata sostituita su richiesta dell’utente. I dati originali restano conservati nel progetto; non sono usati nel laboratorio. La descrizione seguente documenta il precedente import.
+### Centrali idroelettriche
 
-API pubblica usata dal sito ufficiale:
-https://energiedashboard.admin.ch/api/strom/v2/fuellungsgrad-speicherseen
+Fonte: [UFE — Statistica degli impianti idroelettrici WASTA](https://www.bfe.admin.ch/en/hydropower-statistics), con dati al **31 dicembre 2025**.
 
-Copia della risposta: `data/storage-source.json`. Ultima data indicata dall’API: **26 ottobre 2026**. Si conservano solo i valori disponibili fino a questa data. La risposta contiene una griglia giornaliera; la bozza ne seleziona i lunedì, ottenendo 52 campioni dal 3 novembre 2025 al 26 ottobre 2026. Non si generano misure mancanti e non si costruisce una serie sintetica. L’UFE pubblica i dati di base settimanalmente; va verificato il rapporto tra timestamp API e data della misurazione prima dell’implementazione definitiva.
+Il [CSV originale](https://www.uvek-gis.admin.ch/BFE/storymaps/WK_WASTA/WASTA20251231.csv) è conservato in `data/wasta-source.csv`. I campi utilizzati sono nome, identificativo WASTA, produzione annua attesa, salto, tipologia e coordinate. Le coordinate LV95 sono convertite in WGS84 con formule approssimate.
 
-Usati `speicherstandProzent`, `speicherstandGWh` e `fiveYearMittelwert`. Quest’ultimo è etichettato come “media di riferimento UFE”: il campo ha un nome storico e la descrizione del portale parla anche di confronto su dieci anni. La bozza non assegna un intervallo di anni non verificato alla media.
+L’inventario comprende impianti da almeno 300 kW: 605 ad acqua fluente, 99 con serbatoio, 21 a pompaggio misto e 3 a sola ricircolazione. L’area dei punti rappresenta la produzione attesa, con una dimensione minima per rendere selezionabili anche gli impianti più piccoli.
 
-Indicatore a serbatoio: rappresenta la percentuale della capacità energetica regionale, non il livello geometrico di un lago reale. Le barre regionali confrontano percentuali, con capacità differenti. Nessuna conversione in case alimentate o altri equivalenti non documentati.
+La produzione attesa riguarda gli apporti naturali e non è una misura della produzione effettiva del 2025. Per gli impianti di confine è considerata la quota svizzera. Un valore nullo degli apporti naturali non implica assenza di produzione da ricircolazione.
 
-### Geografia e identità
+I dati sono inclusi localmente e **non si aggiornano automaticamente**.
 
-Confine Svizzera: Natural Earth, 1:50 milioni, public domain:
-https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_countries.geojson
+### Calcoli del laboratorio
 
-Confini cantonali: BFS, Generalisierte Gemeindegrenzen 2025-01-01, distribuiti in WGS84 da https://github.com/samkhavandi/Swiss_Geography_Look_Ups/blob/main/geometries/canton.geojson . Le 26 geometrie sono semplificate con tolleranza 0,0006 gradi e conservate in `cantons.js`; il Ticino è usato per calcolare l’inquadratura e disegnare il contorno. Il focus continua a mostrare anche punti vicini fuori cantone: il conteggio è dell’inquadratura, non del solo Ticino. Ombra geografica piena, senza sfocatura, spostata di 3px a sinistra e 4px in basso.
+```text
+Potenza (kW) = ρ × g × Q × H × η / 1000
+Energia (kWh) = potenza (kW) × tempo (ore)
+Volume transitato (m³) = Q × tempo (ore) × 3600
+```
 
-Font Cubano e Satoshi, palette crema/azzurro/lime/rosa e ombre nette ripresi dal progetto del kit 10 fornito dall’utente. Progetto di riferimento non modificato. Il marchio in testata è una composizione tipografica provvisoria.
+Il modello assume densità dell’acqua di 1’000 kg/m³, gravità di 9,81 m/s² e rendimento complessivo fisso dell’85%. Salto e portata restano costanti per la durata scelta.
 
-## Verifica svolta
+Con i valori iniziali di 100 m di salto, 4 m³/s di portata e 2 ore, si ottengono 3’335,4 kW e 6’670,8 kWh. L’interfaccia adatta le unità alla scala dei risultati.
 
-Sintassi JavaScript verificata con `node --check`. Prima bozza: selezione delle centrali, confronto delle riserve e layout a 390px. Versione laboratorio: verifiche numeriche descritte sopra; cambio vista, raddoppio della durata, portata zero, importazione del salto WASTA, ripristino e layout mobile verificati nel browser.
+L’animazione è una rappresentazione didattica: non simula la velocità dell’acqua in una condotta a diametro fisso e i giri della turbina non corrispondono a quelli di un impianto reale. Il modello non ricostruisce disponibilità d’acqua, limiti delle turbine, regolazione, pompaggio o rendimento effettivo di una centrale.
 
-Il controllo di progetto non segnala problemi dopo l’aumento dei testi piccoli e la rimozione di animazioni di dimensioni. Il fondo crema è mantenuto come scelta di identità confermata dall’utente; eccezione limitata a questo file nella configurazione Impeccable. Nessuna altra segnalazione soppressa.
+Riferimento: [guida tecnica idroelettrica IFC / Banca Mondiale](https://ppp.worldbank.org/sites/default/files/2021-10/Hydroelectric%20Power%20-%20A%20Guide%20for%20Developers%20and%20Investors.pdf).
 
-Lente: verificati clic nativo con aggancio della centrale vicina, anteprima mouse senza conferma, pressione touch senza conferma, selezione al rilascio e annullamento senza selezione. Le fasi touch sono state simulate in una pagina di verifica temporanea a 390px; l’acquisizione nativa del puntatore non è stata provata su hardware touch. Contorni e ombra verificati nel focus Ticino. La pagina di verifica è stata rimossa.
+### Geografia e identità visiva
 
-Correzione del bordo touch: durante un gesto attivo, il fuoco resta entro la mappa e si ferma al limite inferiore dei punti visibili; uscire con il dito non nasconde la lente. Verificati in simulazione a 390px l’aggancio della centrale più in basso (Hospitalet nella vista Svizzera) e la conferma al rilascio fuori mappa. Il comportamento mouse fuori mappa continua a chiudere la lente. Diametro ridotto a due terzi: 88px su touch e circa 101px con mouse; zoom invariato a 3×.
+- Confine nazionale: [Natural Earth, scala 1:50 milioni](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_countries.geojson), public domain.
+- Confini cantonali: BFS, geometrie generalizzate del 2025, distribuite tramite [Swiss Geography Look Ups](https://github.com/samkhavandi/Swiss_Geography_Look_Ups/blob/main/geometries/canton.geojson) e semplificate per la visualizzazione.
+- Identità Watt About: font Cubano e Satoshi, fondo crema, palette azzurro/lime/pervinca/giallo e ombre nette. Favicon e riferimenti tipografici ripresi dal kit 10.
 
-## Da sviluppare dopo il riscontro
+## Struttura del progetto
 
-Composizione visiva, fotografie/collage delle centrali, contenuti didattici del kit, confini cantonali per un vero filtro Ticino, eventuali ulteriori esperimenti e pipeline di aggiornamento dei dati WASTA. Prima di pubblicare verificare le condizioni specifiche di riuso dei dati UFE e dei font forniti.
+```text
+index.html               Struttura dell’esperienza
+style.css                Stili e layout responsive
+main.js                  Mappa, selettore, lente e laboratorio
+data.js                  Dati degli impianti e geometria nazionale
+cantons.js               Geometrie dei cantoni
+assets/                  Font e favicon
+data/                    Copie delle fonti importate
+previews/                Anteprime dell’interfaccia
+DESIGN.md                Scelte di interfaccia e identità visiva
+PRODUCT.md               Destinatari, obiettivi e requisiti
+RICERCA-fonti-e-concept.md Ricerca delle fonti e del concept
+```
 
-HTML, CSS e JavaScript nativi. Nessuna libreria esterna richiesta, nessuna pubblicazione eseguita.
+La copia dei dati sui bacini in `data/storage-source.json` è conservata come archivio di ricerca e non è utilizzata dall’esperienza attuale.
+
+## Verifiche
+
+Sono stati verificati i calcoli del laboratorio, i casi a salto e portata zero, l’indipendenza della potenza dal tempo, l’importazione del salto dalla mappa, la ricerca delle centrali e il comportamento responsive. Le interazioni touch della lente sono state verificate tramite simulazione; la verifica su hardware touch resta distinta da questi controlli.
+
+Per controllare la sintassi JavaScript:
+
+```bash
+node --check main.js
+```
